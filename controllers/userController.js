@@ -1,6 +1,6 @@
 const User = require("../models/User");
 
-// REGISTER
+// ✅ REGISTER
 exports.register = async (req, res) => {
   let { name, phone, email, password } = req.body;
 
@@ -13,17 +13,14 @@ exports.register = async (req, res) => {
     return res.status(400).send("All fields required");
   }
 
-  // PHONE
   if (!/^\d{10}$/.test(phone)) {
     return res.status(400).send("Phone must be 10 digits");
   }
 
-  // EMAIL
   if (!/^\S+@\S+\.\S+$/.test(email)) {
     return res.status(400).send("Invalid email");
   }
 
-  // PASSWORD RULE (ONLY FOR REGISTER)
   const passwordRegex = /^[A-Z].{7,}\d{2}$/;
   if (!passwordRegex.test(password)) {
     return res.status(400).send(
@@ -40,12 +37,13 @@ exports.register = async (req, res) => {
     const newUser = new User({ name, phone, email, password });
     await newUser.save();
 
-    res.send("Registered");
+    res.send("Registered successfully");
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
+// ✅ LOGIN
 exports.login = async (req, res) => {
   let { email, password } = req.body;
 
@@ -57,12 +55,17 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email, password });
-    if (user) {
-      res.send(user);
-    } else {
-      res.status(401).send("Invalid email or password");
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).send("User not found");
     }
+
+    if (user.password !== password) {
+      return res.status(401).send("Invalid password");
+    }
+
+    res.json(user);
   } catch (err) {
     res.status(500).send("Server error");
   }
