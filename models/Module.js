@@ -1,18 +1,24 @@
 const mongoose = require("mongoose");
 
-const moduleSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const moduleSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    ppt: {
+      type: String,
+    },
+    videos: [
+      {
+        type: String,
+      },
+    ],
   },
-  description: {
-    type: String,
-    trim: true,
-  },
-  // Add other fields as needed
-}, {
-  timestamps: true,
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("Module", moduleSchema);

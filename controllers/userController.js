@@ -9,7 +9,6 @@ exports.register = async (req, res) => {
   email = email?.trim();
   password = password?.trim();
 
-  // REQUIRED
   if (!name || !phone || !email || !password) {
     return res.status(400).send("All fields required");
   }
@@ -33,7 +32,6 @@ exports.register = async (req, res) => {
   }
 
   try {
-    // CHECK USER
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).send("User already exists");
@@ -48,7 +46,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// LOGIN (NO PASSWORD RULE HERE)
 exports.login = async (req, res) => {
   let { email, password } = req.body;
 
