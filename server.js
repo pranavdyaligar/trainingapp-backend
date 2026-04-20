@@ -1,48 +1,27 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const cors = require("cors");
+require("./db");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-    trim: true,
-    validate: {
-      validator: function(v) {
-        return /^\d{10}$/.test(v);
-      },
-      message: "Phone must be 10 digits",
-    },
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-    validate: {
-      validator: function(v) {
-        return /^\S+@\S+\.\S+$/.test(v);
-      },
-      message: "Invalid email",
-    },
-  },
-  password: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function(v) {
-        const passwordRegex = /^[A-Z].{7,}\d{2}$/;
-        return passwordRegex.test(v);
-      },
-      message: "Password must be min 10 chars, start with capital, end with 2 numbers",
-    },
-  },
-}, {
-  timestamps: true,
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// ROUTES
+const userRoutes = require("./routes/userRoutes");
+const moduleRoutes = require("./routes/moduleRoutes");
+
+app.use("/api/users", userRoutes);
+app.use("/api/modules", moduleRoutes);
+
+// TEST ROUTE
+app.get("/", (req, res) => {
+  res.send("Backend working");
 });
 
-module.exports = mongoose.model("User", userSchema);
+// PORT FIX (IMPORTANT FOR RENDER)
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
